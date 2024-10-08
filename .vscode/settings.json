@@ -1,0 +1,9 @@
+{
+  "editor.rulers": [100],
+  "editor.tabSize": 4,
+
+  "files.exclude": {
+    "**/dist": true,
+    "**/target": true
+  }
+}

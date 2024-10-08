@@ -1,0 +1,7 @@
+.DS_Store
+/.dioxus/
+/.vscode/chrome/
+/assets/**/*.br
+/dist.tar.gz
+/dist/
+/target

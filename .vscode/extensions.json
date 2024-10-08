@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dcmfx.dcmfx",
+    "github.vscode-github-actions",
+    "ms-vscode.wasm-dwarf-debugging",
+    "rust-lang.rust-analyzer",
+    "streetsidesoftware.code-spell-checker",
+    "tamasfe.even-better-toml"
+  ]
+}

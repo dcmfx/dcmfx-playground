@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build --release",
+      "type": "shell",
+      "command": "dx build --release",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run dev server",
+      "type": "shell",
+      "command": "dx serve",
+      "problemMatcher": []
+    }
+  ]
+}
