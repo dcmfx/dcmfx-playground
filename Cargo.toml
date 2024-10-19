@@ -7,10 +7,9 @@ repository = "https://github.com/dcmfx/dcmfx-playground"
 edition = "2021"
 
 [dependencies]
-dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.1.0" }
+dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.1.1" }
 dioxus = { version = "0.6.0-alpha.3", features = ["web"] }
 dioxus-logger = "0.5.1"
-dioxus-router = "0.6.0-alpha.3"
 getrandom = { version = "0.2.15", features = ["js"] }
 gloo-timers = { version = "0.3.0", features = ["futures"] }
 indexmap = "2.6.0"
