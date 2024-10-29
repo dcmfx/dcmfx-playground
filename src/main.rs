@@ -116,7 +116,7 @@ fn App() -> Element {
             store_encapsulated_pixel_data: true,
         };
 
-        match data_set().to_json_stream(Some(config), &mut writer) {
+        match data_set().to_json_stream(config, &mut writer) {
             Ok(()) => {
                 utils::trigger_download(writer.into_js_array(), &filename, "application/dicom")
                     .unwrap();
