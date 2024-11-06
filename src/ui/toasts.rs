@@ -28,7 +28,7 @@ fn add(r#type: ToastType, message: String, duration: Duration) {
     TOASTS.write().insert(id, Toast { r#type, message });
 
     // Remove the toast after the specified duration
-    spawn(async move {
+    spawn_forever(async move {
         gloo_timers::future::sleep(duration).await;
         TOASTS.write().shift_remove(&id);
     });
