@@ -155,7 +155,7 @@ fn DataSetEncapsulatedPixelData(
             DataElementValueRow {
                 indent,
                 expanded: if items.is_empty() { None } else { Some(expanded()) },
-                tag: registry::tag_name(tag, None),
+                tag: dictionary::tag_name(tag, None),
                 vr: main_data_set()
                     .get_value_at_path(&path_to_encapsulated_pixel_data)
                     .unwrap()

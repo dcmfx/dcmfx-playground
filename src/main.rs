@@ -2,9 +2,9 @@
 
 use data_set_grid::*;
 use dcmfx::{core::*, json::*, p10::*};
+use dioxus::document::Title;
 use dioxus::prelude::*;
 use dioxus_elements::{FileEngine, HasFileData};
-use dioxus_logger::tracing::Level;
 use std::sync::Arc;
 
 mod data_set_grid;
@@ -13,9 +13,10 @@ mod utils;
 
 use crate::ui::FontAwesomeIcon;
 
-fn main() {
-    dioxus_logger::init(Level::INFO).expect("Logger init failed");
+const LOGO_SVG: Asset = asset!("/assets/logo.svg");
+const MAIN_CSS: Asset = asset!("/assets/main.css");
 
+fn main() {
     launch(App);
 }
 
@@ -114,6 +115,7 @@ fn App() -> Element {
 
         let config = DicomJsonConfig {
             store_encapsulated_pixel_data: true,
+            pretty_print: true,
         };
 
         match data_set().to_json_stream(config, &mut writer) {
@@ -128,7 +130,9 @@ fn App() -> Element {
     };
 
     rsx! {
-        link { rel: "stylesheet", href: "main.css" }
+        Title { "DCMfx Playground" }
+
+        link { rel: "stylesheet", href: MAIN_CSS }
         script {
             src: "https://kit.fontawesome.com/4e8968f74f.js",
             crossorigin: "anonymous"
@@ -152,7 +156,7 @@ fn App() -> Element {
             div {
                 class: "app-header",
 
-                img { src: "logo.svg", height: "64px" }
+                img { src: LOGO_SVG, height: "64px" }
                 h1 { "DCMfx Playground" }
                 a {
                     href: "https://github.com/dcmfx/dcmfx-playground",

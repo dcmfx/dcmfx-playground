@@ -7,21 +7,32 @@ repository = "https://github.com/dcmfx/dcmfx-playground"
 edition = "2021"
 
 [dependencies]
-dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.2.0" }
-dioxus = { version = "0.6.0-alpha.4", features = ["web"] }
-dioxus-logger = "0.5.1"
+dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.8.0" }
+dioxus = { version = "0.6.2", features = ["web"] }
+dioxus-fullstack = "0.6.2"
 getrandom = { version = "0.2.15", features = ["js"] }
 gloo-timers = { version = "0.3.0", features = ["futures"] }
-indexmap = "2.6.0"
-js-sys = "0.3.72"
+indexmap = "2.7.1"
+js-sys = "0.3.77"
 scopeguard = "1.2.0"
-tokio = "1.41.0"
-web-sys = { version = "0.3.72", features = ["BlobPropertyBag", "Url"] }
+serde = "1.0.217"
+tokio = { version = "1.43.0", features = ["time"] }
+web-sys = { version = "0.3.77", features = ["BlobPropertyBag", "Url"] }
 
 # The code in dcmfx_core::registry exceeds WASM's locals limit if not optimized,
 # so always optimize that package
 [profile.dev.package.dcmfx_core]
 opt-level = "z"
-
+RUSTFLAGS='--cfg getrandom_backend="wasm_js"'
 [profile.release]
 lto = true
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"

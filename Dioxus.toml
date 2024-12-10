@@ -1,16 +1,8 @@
 [application]
 name = "dcmfx_playground"
-default_platform = "web"
-out_dir = "dist"
-asset_dir = "assets"
 
 [web.app]
-title = "DCMfx Playground"
 base_path = "dcmfx-playground"
-
-[web.watcher]
-reload_html = true
-watch_path = ["src", "assets"]
 
 [web.resource]
 style = []
