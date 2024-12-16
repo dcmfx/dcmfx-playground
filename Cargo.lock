@@ -280,7 +280,7 @@ checksum = "e8566979429cf69b49a5c740c60791108e86440e8be149bbea4fe54d2c32d6e2"
 [[package]]
 name = "dcmfx"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 dependencies = [
  "dcmfx_anonymize",
  "dcmfx_character_set",
@@ -293,7 +293,7 @@ dependencies = [
 [[package]]
 name = "dcmfx_anonymize"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 dependencies = [
  "dcmfx_core",
 ]
@@ -301,12 +301,12 @@ dependencies = [
 [[package]]
 name = "dcmfx_character_set"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 
 [[package]]
 name = "dcmfx_core"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 dependencies = [
  "byteorder",
  "owo-colors",
@@ -320,7 +320,7 @@ dependencies = [
 [[package]]
 name = "dcmfx_json"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 dependencies = [
  "base64",
  "byteorder",
@@ -334,7 +334,7 @@ dependencies = [
 [[package]]
 name = "dcmfx_p10"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 dependencies = [
  "byteorder",
  "dcmfx_character_set",
@@ -345,7 +345,7 @@ dependencies = [
 [[package]]
 name = "dcmfx_pixel_data"
 version = "0.0.0"
-source = "git+https://github.com/dcmfx/dcmfx?tag=v0.3.1#2d406a3e5c77e37d072982617664e0cee226fb88"
+source = "git+https://github.com/dcmfx/dcmfx?tag=v0.4.0#8b102a6805fb552b4da03df965da77d8fc5e91c4"
 dependencies = [
  "byteorder",
  "dcmfx_core",
