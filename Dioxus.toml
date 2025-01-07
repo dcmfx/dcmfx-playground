@@ -1,6 +1,5 @@
 [application]
 name = "dcmfx_playground"
-out_dir = "dist"
 
 [web.app]
 base_path = "dcmfx-playground"
