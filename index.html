@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>DCMfx Playground</title>
-  <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="UTF-8" />
-  
-</head>
-<body>
-  <div id="main"></div>
-  <script type="module">
-    import init from "/dcmfx-playground/assets/dioxus/dcmfx_playground.js";
-    init("/dcmfx-playground/assets/dioxus/dcmfx_playground_bg.wasm").then(wasm => {
-      if (wasm.__wbindgen_start == undefined) {
-        wasm.main();
-      }
-    });
-  </script>
-  
-</body>
+  <head>
+    <title>dioxus | ⛺</title>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+  <link rel="preload" as="script" href="/dcmfx-playground/assets/dcmfx_playground-a10b0aa619039047.js" crossorigin><link rel="preload" as="fetch" type="application/wasm" href="/dcmfx-playground/assets/dcmfx_playground_bg-665b12566bbc14aa.wasm" crossorigin></head>
+  <body>
+    <div id="main"></div>
+  <script>
+            // We can't use a module script here because we need to start the script immediately when streaming
+            import("/dcmfx-playground/assets/dcmfx_playground-a10b0aa619039047.js").then(
+                ({ default: init }) => {
+                init("/dcmfx-playground/assets/dcmfx_playground_bg-665b12566bbc14aa.wasm").then((wasm) => {
+                    if (wasm.__wbindgen_start == undefined) {
+                    wasm.main();
+                    }
+                });
+                }
+            );
+            </script>
+            
+            </body>
 </html>
