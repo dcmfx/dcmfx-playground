@@ -4,12 +4,12 @@ version = "0.0.0"
 description = "DCMfx Playground"
 license = "AGPL-3.0-only"
 repository = "https://github.com/dcmfx/dcmfx-playground"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.8.0" }
-dioxus = { version = "0.6.2", features = ["web"] }
-dioxus-fullstack = "0.6.2"
+dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.9.0" }
+dioxus = { version = "0.6.3", features = ["web"] }
+dioxus-fullstack = "0.6.3"
 getrandom = { version = "0.2.15", features = ["js"] }
 gloo-timers = { version = "0.3.0", features = ["futures"] }
 indexmap = "2.7.1"
@@ -24,6 +24,7 @@ web-sys = { version = "0.3.77", features = ["BlobPropertyBag", "Url"] }
 [profile.dev.package.dcmfx_core]
 opt-level = "z"
 RUSTFLAGS='--cfg getrandom_backend="wasm_js"'
+
 [profile.release]
 lto = true
 

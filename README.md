@@ -31,7 +31,7 @@ never leave your device.
 ## Development
 
 DCMfx Playground is written in [Dioxus](https://dioxuslabs.com). Install the Dioxus CLI with
-`cargo install dioxus-cli`, then run `dx serve` to start the dev server.
+`cargo install dioxus-cli@0.6.3`, then run `dx serve` to start the dev server.
 
 ## License 📋
 
