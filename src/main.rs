@@ -1,20 +1,21 @@
 #![allow(non_snake_case)]
 
-use data_set_grid::*;
 use dcmfx::{core::*, json::*, p10::*};
-use dioxus::document::Title;
-use dioxus::prelude::*;
-use dioxus_elements::{FileEngine, HasFileData};
-use std::sync::Arc;
+use dioxus::{document::Title, prelude::*};
+use dioxus_elements::{FileData, HasFileData};
 
 mod data_set_grid;
+mod drop_area;
+mod pixel_data_frame_view;
 mod ui;
 mod utils;
 
-use crate::ui::FontAwesomeIcon;
+use data_set_grid::*;
+use drop_area::*;
+use pixel_data_frame_view::*;
 
 const LOGO_SVG: Asset = asset!("/assets/logo.svg");
-const MAIN_CSS: Asset = asset!("/assets/main.css");
+const MAIN_CSS: Asset = asset!("/assets/main.scss");
 
 fn main() {
     launch(App);
@@ -26,6 +27,12 @@ enum DataSetSourceType {
     Json,
 }
 
+#[derive(Clone, PartialEq)]
+enum ViewMode {
+    DataSet,
+    PixelData,
+}
+
 #[component]
 fn App() -> Element {
     let mut dicom_filename = use_signal(String::new);
@@ -34,49 +41,55 @@ fn App() -> Element {
     let mut error_lines = use_signal::<Vec<String>>(Vec::new);
     let mut is_file_dragged_over = use_signal(|| false);
 
+    let mut view_mode = use_signal(|| ViewMode::DataSet);
+
     let mut clear_dicom = move || {
         dicom_filename.set("".to_string());
         data_set.set(DataSet::new());
         error_lines.set(vec![]);
     };
 
-    let mut on_select_input_file = move |files: Option<Arc<dyn FileEngine>>| {
+    let mut on_select_input_file = move |file_data: Option<FileData>| {
         dicom_filename.set("".to_string());
         error_lines.set(vec![]);
 
         spawn(async move {
-            if let Some(file_engine) = files {
-                if let Some(filename) = file_engine.files().first() {
-                    if let Some(bytes) = file_engine.read_file(filename).await {
-                        dicom_filename.set(filename.clone());
+            let Some(file_data) = file_data else {
+                return;
+            };
 
-                        // If the file has a .json extension then load it as a DICOM JSON file,
-                        // otherwise load it as a DICOM P10
-                        if dicom_filename().to_lowercase().ends_with(".json") {
-                            if let Ok(json) = std::str::from_utf8(&bytes) {
-                                match DataSet::from_json(json) {
-                                    Ok(ds) => {
-                                        data_set.set(ds);
-                                        data_set_source_type.set(DataSetSourceType::Json);
-                                    }
-                                    Err(e) => error_lines.set(e.to_lines("")),
-                                };
-                            }
-                        } else {
-                            match dcmfx::p10::read_bytes(bytes) {
-                                Ok(ds) => {
-                                    data_set.set(ds);
-                                    data_set_source_type.set(DataSetSourceType::P10);
-                                }
-                                Err((e, mut data_set_builder)) => {
-                                    data_set_builder.force_end();
-                                    data_set.set(data_set_builder.final_data_set().unwrap());
-                                    error_lines.set(e.to_lines("reading file"));
-                                }
-                            };
-                        }
+            let Ok(bytes) = file_data.read_bytes().await else {
+                return;
+            };
+
+            dicom_filename.set(file_data.name());
+
+            // If the file has a .json extension then load it as a DICOM JSON file, otherwise load
+            // it as a DICOM P10
+            if dicom_filename().to_lowercase().ends_with(".json") {
+                let Ok(json) = std::str::from_utf8(&bytes) else {
+                    return;
+                };
+
+                match DataSet::from_json(json) {
+                    Ok(ds) => {
+                        data_set.set(ds);
+                        data_set_source_type.set(DataSetSourceType::Json);
                     }
-                }
+                    Err(e) => error_lines.set(e.to_lines("")),
+                };
+            } else {
+                match dcmfx::p10::read_bytes(bytes.to_vec().into()) {
+                    Ok(ds) => {
+                        data_set.set(ds);
+                        data_set_source_type.set(DataSetSourceType::P10);
+                    }
+                    Err((e, mut data_set_builder)) => {
+                        data_set_builder.force_end();
+                        data_set.set(data_set_builder.final_data_set().unwrap());
+                        error_lines.set(e.to_lines("reading file"));
+                    }
+                };
             }
         });
     };
@@ -89,11 +102,11 @@ fn App() -> Element {
             }
         };
 
-        let mut writer = utils::BlobPartWriter::new(1024 * 1024);
+        let mut writer = utils::download::BlobPartWriter::new(1024 * 1024);
 
         match data_set().write_p10_stream(&mut writer, None) {
             Ok(()) => {
-                utils::trigger_download(writer.into_js_array(), &filename, "application/json")
+                utils::download::trigger(writer.into_js_array(), &filename, "application/json")
                     .unwrap();
 
                 ui::toasts::add_info("Generated DICOM P10 file for download".into());
@@ -111,7 +124,7 @@ fn App() -> Element {
             DataSetSourceType::Json => dicom_filename(),
         };
 
-        let mut writer = utils::BlobPartWriter::new(1024 * 1024);
+        let mut writer = utils::download::BlobPartWriter::new(1024 * 1024);
 
         let config = DicomJsonConfig {
             store_encapsulated_pixel_data: true,
@@ -120,7 +133,7 @@ fn App() -> Element {
 
         match data_set().to_json_stream(config, &mut writer) {
             Ok(()) => {
-                utils::trigger_download(writer.into_js_array(), &filename, "application/dicom")
+                utils::download::trigger(writer.into_js_array(), &filename, "application/dicom")
                     .unwrap();
 
                 ui::toasts::add_info("Generated DICOM JSON file for download".into());
@@ -130,9 +143,10 @@ fn App() -> Element {
     };
 
     rsx! {
+        document::Stylesheet { href: MAIN_CSS }
+
         Title { "DCMfx Playground" }
 
-        link { rel: "stylesheet", href: MAIN_CSS }
         script {
             src: "https://kit.fontawesome.com/4e8968f74f.js",
             crossorigin: "anonymous"
@@ -149,21 +163,28 @@ fn App() -> Element {
             ondragleave: move |_| is_file_dragged_over.set(false),
             ondrop: move |event| {
                 event.prevent_default();
-                on_select_input_file(event.files());
+                on_select_input_file(event.files().into_iter().next());
                 is_file_dragged_over.set(false);
             },
 
             div {
                 class: "app-header",
 
-                img { src: LOGO_SVG, height: "64px" }
-                h1 { "DCMfx Playground" }
+                img { src: LOGO_SVG, height: "48px" }
+                h1 {
+                    "DCMfx Playground"
+
+                    if !dicom_filename().is_empty() {
+                        " — "
+                        code { i { "\"{dicom_filename}\"" } }
+                    }
+                }
                 a {
                     href: "https://github.com/dcmfx/dcmfx-playground",
                     target: "_blank",
                     margin_left: "auto",
 
-                    FontAwesomeIcon { icon: "github", style: "brands", size: "2x" }
+                    ui::FontAwesomeIcon { icon: "github", style: "brands", size: "2x" }
                 }
             }
 
@@ -171,26 +192,31 @@ fn App() -> Element {
                 class: "name-divider",
 
                 div { class: "divider-line" }
-                div {
-                    class: "file-details",
-
+                if !dicom_filename().is_empty() {
                     div {
-                        class: "details-text",
+                        class: "file-details",
 
-                        if dicom_filename().is_empty() {
-                            "No DICOM selected"
-                        } else {
-                            {dicom_filename}
+                        div {
+                            class: "details-text",
+                            class: if view_mode() == ViewMode::DataSet { "selected" },
+
+                            onclick: move |_| view_mode.set(ViewMode::DataSet),
+                            "Data set"
                         }
-                    }
+                        div { class: "vertical-divider" }
+                        div {
+                            class: "details-text",
+                            class: if view_mode() == ViewMode::PixelData { "selected" },
 
-                    if !dicom_filename().is_empty() {
+                            onclick: move |_| view_mode.set(ViewMode::PixelData),
+                            "Pixel data"
+                        }
                         div { class: "vertical-divider" }
                         div {
                             class: "close-icon",
                             onclick: move |_| clear_dicom(),
 
-                            FontAwesomeIcon { icon: "close", style: "solid", size: "lg" }
+                            ui::FontAwesomeIcon { icon: "close", style: "solid", size: "lg" }
                         }
                     }
                 }
@@ -214,7 +240,11 @@ fn App() -> Element {
             if data_set().is_empty() && error_lines().is_empty() {
                 DropArea { is_file_dragged_over, on_select_input_file }
             } else {
-                DataSetGrid { main_data_set: data_set }
+                if view_mode() == ViewMode::DataSet {
+                    DataSetGrid { main_data_set: data_set }
+                } else {
+                    PixelDataFrameView { data_set, frame_index: 0 }
+                }
             }
 
             div {
@@ -226,40 +256,6 @@ fn App() -> Element {
             }
 
             ui::ToastUi {}
-        }
-    }
-}
-
-#[component]
-fn DropArea(
-    is_file_dragged_over: Signal<bool>,
-    on_select_input_file: EventHandler<Option<Arc<dyn FileEngine>>>,
-) -> Element {
-    rsx! {
-        div {
-            class: "drop-area-container",
-
-            div {
-                class: "drop-area",
-                class: if is_file_dragged_over() { "active-drag-over" },
-
-                i { class: "fa-solid fa-file-medical fa-3x" }
-
-                span { "Drop a DICOM or DICOM JSON file here, or click to browse for a file." }
-                span {
-                    font_size: "0.75em",
-                    color: "#AAA",
-                    margin: "0 2em",
-
-                    "Opened DICOM files never leave your device."
-                }
-
-                input {
-                    id: "dicom-file-input",
-                    r#type: "file",
-                    onchange: move |event| on_select_input_file(event.files()),
-                }
-            }
         }
     }
 }

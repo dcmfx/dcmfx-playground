@@ -7,23 +7,31 @@ repository = "https://github.com/dcmfx/dcmfx-playground"
 edition = "2024"
 
 [dependencies]
-dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.9.0" }
-dioxus = { version = "0.6.3", features = ["web"] }
-dioxus-fullstack = "0.6.3"
-getrandom = { version = "0.2.15", features = ["js"] }
+dcmfx = { git = "https://github.com/dcmfx/dcmfx", tag = "v0.40.1", default-features = false, features = [
+    "pixel_data_native",
+] }
+dioxus = { version = "0.7.1", features = ["web"] }
+dioxus-fullstack = "0.7.1"
 gloo-timers = { version = "0.3.0", features = ["futures"] }
-indexmap = "2.7.1"
-js-sys = "0.3.77"
+image = { version = "0.25.9", default-features = false, features = ["jpeg"] }
+indexmap = "2.12.1"
+js-sys = "0.3.83"
 scopeguard = "1.2.0"
-serde = "1.0.217"
-tokio = { version = "1.43.0", features = ["time"] }
-web-sys = { version = "0.3.77", features = ["BlobPropertyBag", "Url"] }
+serde = "1.0.228"
+wasm-bindgen = "0.2.106"
+web-sys = { version = "0.3.83", features = [
+    "BlobPropertyBag",
+    "ImageData",
+    "ImageBitmap",
+    "HtmlCanvasElement",
+    "CanvasRenderingContext2d",
+    "Url",
+] }
 
 # The code in dcmfx_core::registry exceeds WASM's locals limit if not optimized,
 # so always optimize that package
 [profile.dev.package.dcmfx_core]
 opt-level = "z"
-RUSTFLAGS='--cfg getrandom_backend="wasm_js"'
 
 [profile.release]
 lto = true

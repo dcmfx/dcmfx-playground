@@ -28,7 +28,7 @@ body {
   color: var(--theme-text-color-default);
 
   font-family: sans-serif;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .main {
@@ -82,7 +82,8 @@ body {
   display: flex;
   gap: 1em;
   align-items: center;
-  padding: 0.5em 0.5em 0;
+  padding: 0.5em 0.5em;
+  line-height: 1em;
 
   a {
     color: inherit;
@@ -98,7 +99,6 @@ body {
   grid-area: name;
   display: flex;
   align-items: center;
-  margin-top: -6px;
 
   .divider-line {
     flex: 1;
@@ -109,18 +109,21 @@ body {
   .file-details {
     border: 2px solid var(--theme-border-color-0);
     border-radius: 4px;
-    padding: 0 8px;
     background-color: var(--theme-bg-color-1);
     display: flex;
     align-items: center;
 
     .details-text {
-      padding: 4px 0;
+      padding: 4px 8px;
+      cursor: pointer;
+
+      &.selected {
+        background-color: var(--theme-border-color-1);
+      }
     }
 
     .vertical-divider {
       min-width: 2px;
-      margin: 0 8px;
       background-color: var(--theme-border-color-0);
       align-self: stretch;
     }
@@ -128,6 +131,7 @@ body {
     .close-icon {
       transition: color 100ms;
       cursor: pointer;
+      padding: 0 8px;
 
       &:hover {
         color: var(--theme-text-color-highlight);
@@ -170,19 +174,18 @@ body {
     border: 2px dashed var(--theme-border-color-1);
     border-radius: 0.5em;
     text-align: center;
-    transition: background-color 200ms, border-color 200ms, color 200ms;
+    transition: background-color 200ms, filter 200ms;
     font-size: 16px;
     display: grid;
     gap: 2em;
 
-    &:hover,
-    &.active-drag-over {
-      border-color: var(--theme-border-color-2);
-      color: var(--theme-text-color-highlight);
-    }
-
     &.active-drag-over {
       background-color: var(--theme-bg-color-1);
+    }
+
+    &:hover,
+    &.active-drag-over {
+      filter: brightness(1.1);
     }
 
     #dicom-file-input {
@@ -289,4 +292,30 @@ body {
     padding: 0.5em 0.8em;
     cursor: pointer;
   }
+}
+
+.frame-view {
+  grid-area: main;
+  margin-top: 0.5em;
+  background: black;
+  position: relative;
+
+  canvas {
+    position: absolute;
+  }
+
+  display: grid;
+}
+
+.frame-view-error {
+  color: white;
+  place-self: center;
+  text-align: center;
+  max-width: 24em;
+  z-index: 1;
+  background: rgba(255, 0, 0, 0.3);
+  border: 1px solid red;
+  backdrop-filter: blur(1em);
+  border-radius: 4px;
+  padding: 1.5em 1em;
 }

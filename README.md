@@ -11,7 +11,6 @@
   </p>
 
   [<img src="https://img.shields.io/badge/License-AGPLv3-blue.svg">](https://www.gnu.org/licenses/agpl-3.0.en.html)
-  [<img src="https://img.shields.io/badge/MSRV-1.80-CE422B">](https://www.rust-lang.org)
 </div>
 
 ## Try It Out 🛝

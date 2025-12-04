@@ -28,7 +28,7 @@ fn add(r#type: ToastType, message: String, duration: Duration) {
     TOASTS.write().insert(id, Toast { r#type, message });
 
     // Remove the toast after the specified duration
-    spawn_forever(async move {
+    dioxus_core::spawn_forever(async move {
         gloo_timers::future::sleep(duration).await;
         TOASTS.write().shift_remove(&id);
     });
@@ -47,7 +47,7 @@ enum ToastType {
 }
 
 impl ToastType {
-    fn to_css_class(&self) -> &'static str {
+    fn css_class(&self) -> &'static str {
         match self {
             Self::Info => "info",
             Self::Error => "error",
@@ -64,7 +64,7 @@ pub fn ToastUi() -> Element {
             for (_id, toast) in TOASTS.read().iter() {
                 div {
                     class: "toast",
-                    class: "{toast.r#type.to_css_class()}",
+                    class: "{toast.r#type.css_class()}",
 
                     {toast.message.clone()}
                 }

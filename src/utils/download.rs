@@ -3,11 +3,7 @@ use js_sys::wasm_bindgen::{JsCast, JsValue};
 /// Triggers a browser download of a file with the contents specified by the given blob parts, which
 /// must be an array of [`js_sys::Uint8Array`]s.
 ///
-pub fn trigger_download(
-    blob_parts: js_sys::Array,
-    filename: &str,
-    mime_type: &str,
-) -> Result<(), JsValue> {
+pub fn trigger(blob_parts: js_sys::Array, filename: &str, mime_type: &str) -> Result<(), JsValue> {
     // Create property bag specifying the MIME type
     let options = web_sys::BlobPropertyBag::new();
     options.set_type(mime_type);
@@ -22,7 +18,7 @@ pub fn trigger_download(
     }
 
     // Create anchor tag for triggering the download
-    let document = web_sys::window().unwrap().document().unwrap();
+    let document = super::document();
     let a = document
         .create_element("a")?
         .dyn_into::<web_sys::HtmlElement>()?;
@@ -79,8 +75,8 @@ impl BlobPartWriter {
     }
 }
 
-impl std::io::Write for BlobPartWriter {
-    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+impl dcmfx::p10::IoWrite for BlobPartWriter {
+    fn write_all(&mut self, buf: &[u8]) -> Result<(), dcmfx::p10::IoError> {
         let mut remaining = buf;
 
         while !remaining.is_empty() {
@@ -95,10 +91,10 @@ impl std::io::Write for BlobPartWriter {
             }
         }
 
-        Ok(buf.len())
+        Ok(())
     }
 
-    fn flush(&mut self) -> std::io::Result<()> {
+    fn flush(&mut self) -> Result<(), dcmfx::p10::IoError> {
         self.flush_buffer();
         Ok(())
     }
